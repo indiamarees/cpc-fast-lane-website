@@ -96,14 +96,23 @@ const DOM = {
     noMissedMsg: document.getElementById('no-missed-msg')
 };
 
-// --- INITIALIZATION ---
+// This tells the browser to wait until ALL the HTML elements are fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. --- All your functions and variables go here ---
+    
+    // 2. --- This is where you find the buttons ---
+    const quizBuilderButton = document.getElementById('quiz-builder-card');
+    
+    // 3. --- This is where you add the click listener ---
+    if (quizBuilderButton) {
+        quizBuilderButton.addEventListener('click', function() {
+            // Your code to start the quiz goes here
+            console.log('Quiz Builder clicked!');
+        });
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-    registerServiceWorker();
-    loadQuestionsAndInit();
-    setupEventListeners();
-    updateUI();
-});
+}); // <-- Closing bracket and parenthesis for the DOMContentLoaded listener
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
@@ -1057,4 +1066,5 @@ function renderChart(canvas, labels, correctData, incorrectData, type) {
     } else if (canvas.id === 'lifetime-category-chart') {
         lifetimeChartInstance = newChart;
     }
+
 }
