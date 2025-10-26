@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPC Fast Lane - Medical Coding Exam Prep</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="assets/manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1 class="logo">CPC Fast Lane</h1>
+            <div class="user-info">
+                <span id="user-display">Guest User</span>
+                <span id="premium-badge" class="badge hidden"><i class="fas fa-crown"></i> Premium</span>
+                <button id="sign-in-btn" class="btn btn-sm btn-primary">Sign In</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="home-view" class="view">
+            <h2>Welcome to the Fast Lane!</h2>
+            <p>Master your medical coding exam with practice quizzes and detailed progress tracking.</p>
+            <div class="card-grid">
+                <button class="card-tile" data-action="show-quiz-builder">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Quiz Builder</h3>
+                    <p>Customize your practice session.</p>
+                </button>
+                <button class="card-tile" data-action="show-missed-questions">
+                    <i class="fas fa-redo-alt"></i>
+                    <h3>Missed Questions</h3>
+                    <p>Drill your weak areas.</p>
+                </button>
+                <button class="card-tile" data-action="show-exam-builder">
+                    <i class="fas fa-clock"></i>
+                    <h3>Exam Builder</h3>
+                    <p>Full-length 240-minute simulation.</p>
+                </button>
+                <button class="card-tile" data-action="show-progress">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>My Progress</h3>
+                    <p>View stats and review past sessions.</p>
+                </button>
+                <button id="upgrade-tile" class="card-tile upgrade-tile hidden" data-action="show-paywall">
+                    <i class="fas fa-lock"></i>
+                    <h3>Upgrade to Premium</h3>
+                    <p>Unlock all 100 questions.</p>
+                </button>
+                <button class="card-tile" data-action="show-settings">
+                    <i class="fas fa-cog"></i>
+                    <h3>Settings</h3>
+                    <p>Manage app data and account.</p>
+                </button>
+            </div>
+        </section>
+
+        <section id="paywall-view" class="view hidden">
+            <h2><i class="fas fa-crown"></i> Go Premium for Full Access</h2>
+            <p>You have reached the **20-question limit** for the Free (Basic) plan.</p>
+            <div class="paywall-tiers">
+                <div class="tier">
+                    <h3>Basic (Free)</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle check-green"></i> Access to the first 20 questions (Lifetime limit)</li>
+                        <li><i class="fas fa-check-circle check-green"></i> Basic Quiz Builder</li>
+                        <li><i class="fas fa-times-circle check-red"></i> Limited Progress Tracking</li>
+                    </ul>
+                </div>
+                <div class="tier primary-tier">
+                    <h3>Premium (One-time Purchase)</h3>
+                    <p class="price-tag">$29.99</p>
+                    <ul>
+                        <li><i class="fas fa-check-circle check-green"></i> **Full Access to 100 Questions**</li>
+                        <li><i class="fas fa-check-circle check-green"></i> Missed Questions Only Mode</li>
+                        <li><i class="fas fa-check-circle check-green"></i> Full Exam Simulation</li>
+                        <li><i class="fas fa-check-circle check-green"></i> Detailed Progress & Analytics</li>
+                    </ul>
+                    <button id="stripe-checkout-btn" class="btn btn-primary btn-lg"><i class="fas fa-lock-open"></i> Unlock Full Access</button>
+                    <button id="restore-purchase-btn" class="btn btn-secondary mt-1">Restore Purchase</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="config-view" class="view hidden">
+            <h2 id="config-title">Quiz Builder</h2>
+            <form id="quiz-config-form">
+                <div class="form-group">
+                    <label for="category-select"><i class="fas fa-tags"></i> Select Categories (Multi-select)</label>
+                    <select id="category-select" multiple size="6" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="num-questions"><i class="fas fa-list-ol"></i> Number of Questions (<span id="q-count-display">25</span>)</label>
+                    <input type="range" id="num-questions" min="1" max="50" value="25" step="1" required>
+                </div>
+                <div class="form-group" id="rationale-toggle-group">
+                    <input type="checkbox" id="show-rationales-toggle" checked>
+                    <label for="show-rationales-toggle"><i class="fas fa-lightbulb"></i> Show Rationale Immediately (Practice Mode)</label>
+                </div>
+                <div class="form-group" id="timer-group" style="display:none;">
+                    <label for="time-limit"><i class="fas fa-hourglass-half"></i> Time Limit (Minutes)</label>
+                    <input type="number" id="time-limit" min="10" max="360" value="240" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-play"></i> Start Quiz</button>
+            </form>
+        </section>
+
+        <section id="quiz-player-view" class="view hidden">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="quiz-progress-bar"></div>
+            </div>
+            <div class="quiz-header">
+                <span id="question-counter">Question X of Y</span>
+                <span id="timer-display" class="timer"></span>
+            </div>
+            <div class="question-container card">
+                <h3 id="question-category" class="question-category"></h3>
+                <p id="question-stem"></p>
+                <form id="question-form">
+                    <label class="option-label" for="optionA">
+                        <input type="radio" name="answer" id="optionA" value="A"> <span id="textA"></span>
+                    </label>
+                    <label class="option-label" for="optionB">
+                        <input type="radio" name="answer" id="optionB" value="B"> <span id="textB"></span>
+                    </label>
+                    <label class="option-label" for="optionC">
+                        <input type="radio" name="answer" id="optionC" value="C"> <span id="textC"></span>
+                    </label>
+                    <label class="option-label" for="optionD">
+                        <input type="radio" name="answer" id="optionD" value="D"> <span id="textD"></span>
+                    </label>
+                </form>
+                <div id="feedback-rationale" class="rationale-box hidden">
+                    <p id="feedback-text" class="feedback"></p>
+                    <h4>Rationale:</h4>
+                    <p id="rationale-text"></p>
+                </div>
+            </div>
+            <div class="quiz-controls">
+                <button id="prev-btn" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Previous</button>
+                <button id="flag-btn" class="btn btn-warning"><i class="fas fa-flag"></i> Flag</button>
+                <button id="next-btn" class="btn btn-primary">Next <i class="fas fa-chevron-right"></i></button>
+                <button id="submit-exam-btn" class="btn btn-success hidden"><i class="fas fa-check-circle"></i> Submit Exam</button>
+            </div>
+        </section>
+
+        <section id="results-view" class="view hidden">
+            <h2 id="results-title">Quiz Results</h2>
+            <div class="card results-summary">
+                <p>Score: <span id="score-display">0</span> / <span id="total-questions-display">0</span></p>
+                <h3>Overall Accuracy: <span id="percent-display">0%</span></h3>
+                <p>Total Time: <span id="time-spent-display"></span></p>
+                <p>Average Time per Question: <span id="avg-time-display"></span> seconds</p>
+            </div>
+
+            <h3>Performance by Category</h3>
+            <canvas id="category-chart" width="400" height="200"></canvas>
+
+            <div class="results-actions">
+                <button id="review-incorrect-btn" class="btn btn-secondary"><i class="fas fa-book-open"></i> Review Incorrect</button>
+                <button id="retake-missed-btn" class="btn btn-secondary hidden"><i class="fas fa-sync-alt"></i> Retake Missed Qs</button>
+                <button id="go-home-btn" class="btn btn-primary"><i class="fas fa-home"></i> Go Home</button>
+            </div>
+
+            <div id="review-list" class="review-list hidden">
+                <h3>Incorrectly Answered Questions:</h3>
+                </div>
+        </section>
+
+        <section id="progress-view" class="view hidden">
+            <h2>Progress Dashboard</h2>
+            <div id="no-progress-msg" class="alert alert-info hidden">No progress data found. Start a quiz!</div>
+            <div class="stats-grid">
+                <div class="card stat-card">
+                    <h4>Total Attempts</h4>
+                    <p id="total-attempts-stat" class="stat-value">0</p>
+                </div>
+                <div class="card stat-card">
+                    <h4>Lifetime Accuracy</h4>
+                    <p id="lifetime-accuracy-stat" class="stat-value">0%</p>
+                </div>
+                <div class="card stat-card">
+                    <h4>Avg Time / Q</h4>
+                    <p id="avg-time-stat" class="stat-value">0s</p>
+                </div>
+                <div class="card stat-card">
+                    <h4>Weakest Area</h4>
+                    <p id="weakest-area-stat" class="stat-value">N/A</p>
+                </div>
+            </div>
+
+            <h3>Recent Sessions</h3>
+            <div id="recent-sessions-list" class="card-list">
+                </div>
+
+            <h3>Overall Category Performance</h3>
+            <canvas id="lifetime-category-chart" width="400" height="200"></canvas>
+        </section>
+
+        <section id="settings-view" class="view hidden">
+            <h2>Settings</h2>
+            <div class="card settings-group">
+                <h3>Account (<span id="settings-email-display">Guest</span>)</h3>
+                <p>Status: <span id="settings-premium-status">Basic</span></p>
+                <button id="settings-sign-in-btn" class="btn btn-secondary"><i class="fas fa-user-circle"></i> Sign In / Change Email</button>
+                <button id="settings-restore-btn" class="btn btn-secondary mt-1"><i class="fas fa-undo-alt"></i> Restore Premium Purchase</button>
+            </div>
+            <div class="card settings-group">
+                <h3>Data Management</h3>
+                <p>This will permanently erase all quiz results and progress from this browser.</p>
+                <button id="reset-progress-btn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Reset All Progress</button>
+            </div>
+        </section>
+
+         <section id="missed-view" class="view hidden">
+            <h2>Missed Questions Only</h2>
+            <div id="missed-q-list">
+                </div>
+            <div id="no-missed-msg" class="alert alert-info">You haven't missed any questions yet. Start a quiz!</div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 CPC Fast Lane. | <a href="LICENSE" target="_blank">MIT License</a></p>
+            <p class="disclaimer">Educational practice only. Not affiliated with or endorsed by AAPC. Use original items, not actual exam questions.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
