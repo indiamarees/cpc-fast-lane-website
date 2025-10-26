@@ -1,0 +1,62 @@
+***
+
+## File: data/questions.json
+
+```json
+[
+  {
+    "id": 1,
+    "category": "Anesthesia",
+    "question": "A 68-year-old male is undergoing a total knee arthroplasty (TKA). The anesthesiologist administers general anesthesia via endotracheal tube. What is the correct CPT® code and anesthesia time is 180 minutes. Base units = 10.",
+    "optionA": "01402",
+    "optionB": "01400",
+    "optionC": "01382",
+    "optionD": "01470",
+    "correctAnswer": "A",
+    "rationale": "The correct code for Anesthesia for procedures on the femur (proximal end, shaft or distal end), knee joint, and all lower leg procedures is 01402. The base unit value is 10. The time units would be 12 (180 min / 15 min per unit). Total units: 22."
+  },
+  {
+    "id": 2,
+    "category": "Evaluation & Management Services",
+    "question": "A physician performs a comprehensive history and examination, and the medical decision making (MDM) is determined to be moderate. The physician is seeing an established patient for a new complaint. What is the appropriate E/M code?",
+    "optionA": "99204",
+    "optionB": "99214",
+    "optionC": "99213",
+    "optionD": "99243",
+    "correctAnswer": "B",
+    "rationale": "For established patient outpatient visits based on MDM, a moderate MDM corresponds to 99214. The 1995/1997 guidelines are no longer primary for E/M. New patient E/M codes start with 9920X. This is an established patient visit."
+  },
+  {
+    "id": 3,
+    "category": "Radiology",
+    "question": "Code the radiological procedure: Complete ultrasound examination of the abdomen, including the liver, gall bladder, common duct, pancreas, spleen, kidneys, upper abdominal aorta, and inferior vena cava.",
+    "optionA": "76700",
+    "optionB": "76705",
+    "optionC": "76801",
+    "optionD": "76815",
+    "correctAnswer": "A",
+    "rationale": "Code 76700 is for an Ultrasound, abdomen, complete. This code requires documentation of all seven elements listed in the question. 76705 is for a limited or follow-up study."
+  },
+  {
+    "id": 4,
+    "category": "Integumentary System",
+    "question": "A patient presents with a malignant melanoma on their back, measuring 1.5 cm. The physician performs an excision with a final excised diameter of 2.6 cm. What is the correct CPT® code?",
+    "optionA": "11603",
+    "optionB": "11604",
+    "optionC": "11403",
+    "optionD": "11406",
+    "correctAnswer": "B",
+    "rationale": "Malignant excision codes (11600-11646) are selected based on the excised diameter. A 2.6 cm excision on the trunk/arms/legs (11600-11606) falls within the 2.1 cm to 3.0 cm range, making 11604 the correct code."
+  },
+  {
+    "id": 5,
+    "category": "Cardiovascular System",
+    "question": "ICD-10-CM coding: A patient is diagnosed with essential (primary) hypertension and hypertensive chronic kidney disease (stage 3). Which code(s) should be reported?",
+    "optionA": "I10, N18.3",
+    "optionB": "I12.9, N18.3",
+    "optionC": "I13.11",
+    "optionD": "I12.9",
+    "correctAnswer": "B",
+    "rationale": "Hypertensive Chronic Kidney Disease (CKD) requires a combination of codes unless a single code covers both. I12.9 (Hypertensive CKD, unspecified) should be coded first, followed by N18.3 (CKD, stage 3) to show the specific stage, as per ICD-10-CM guidelines."
+  }
+]
